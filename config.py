@@ -1,56 +1,62 @@
+# config/settings.py
+from __future__ import annotations
+
 import os
-from pydantic_settings import BaseSettings
 from typing import List
 
+from pydantic_settings import BaseSettings, SettingsConfigDict
+
+
 class Settings(BaseSettings):
-    # ── Application ─────────────────────────────────────
+    # ── Application ───────────────────────────────
     APP_NAME: str = "LLM-Powered Intelligent Query-Retrieval System"
     VERSION: str = "2.0.0"
-    DEBUG: bool = False
+
+    # Will be overwritten by Vercel / dotenv
     HOST: str = "0.0.0.0"
-    PORT: int = 8000
+    PORT: int = int(os.getenv("PORT", 8000))
 
-    # ── Database ────────────────────────────────────────
-    DATABASE_URL: str = "postgresql://postgres:mGJOjNUsNMgtwLOCYSWObWqIpsyvgTAo@shuttle.proxy.rlwy.net:15139/hacrxDB"
+    # ── Runtime mode ──────────────────────────────
+    ENVIRONMENT: str = os.getenv("VERCEL_ENV", "development")
+    DEBUG: bool = ENVIRONMENT != "production"
 
-    # ── Authentication ──────────────────────────────────
-    BEARER_TOKEN: str = "bf787797d87f5efa023148d772c502d020e57fe3e912a9528010a0f662b7dc2c"
+    # ── Database ──────────────────────────────────
+    DATABASE_URL: str  # ← set in .env / Vercel
 
-    # ── Gemini AI ───────────────────────────────────────
+    # ── Authentication ────────────────────────────
+    BEARER_TOKEN: str | None = None  # Optional local testing
+
+    # ── Gemini AI ─────────────────────────────────
     GEMINI_API_KEY: str
     GEMINI_MODEL: str = "gemini-2.0-flash-exp"
     EMBEDDING_MODEL: str = "models/text-embedding-004"
     VECTOR_DIMENSION: int = 768
 
-    # ── Pinecone ────────────────────────────────────────
+    # ── Pinecone ──────────────────────────────────
     PINECONE_API_KEY: str
     PINECONE_ENVIRONMENT: str = "us-east-1-aws"
     PINECONE_INDEX_NAME: str = "hackrx-query-system"
     USE_PINECONE: bool = True
 
-    # ── Document Processing ─────────────────────────────
-    MAX_FILE_SIZE: int = 100 * 1024 * 1024  # 100MB for large policies
+    # ── Document Processing ───────────────────────
+    MAX_FILE_SIZE: int = 100 * 1024 * 1024  # 100 MB
     ALLOWED_FILE_TYPES: List[str] = [".pdf", ".docx", ".txt", ".eml"]
-    CHUNK_SIZE: int = 1500                   # Larger for legal documents
-    CHUNK_OVERLAP: int = 300                 # More overlap for context
+    CHUNK_SIZE: int = 1_500
+    CHUNK_OVERLAP: int = 300
 
-    # ── Query Processing ────────────────────────────────
+    # ── Query Processing ──────────────────────────
     MAX_RESULTS_PER_QUERY: int = 10
-    SIMILARITY_THRESHOLD: float = 0.75       # Higher for accuracy
-    EXPLANATION_MAX_TOKENS: int = 500        # Detailed explanations
+    SIMILARITY_THRESHOLD: float = 0.75
+    EXPLANATION_MAX_TOKENS: int = 500
 
+    # ── Security ──────────────────────────────────
+    SECRET_KEY: str
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
 
-
-    # ── Security ────────────────────────────────────────
-    SECRET_KEY: str = "hackrx-super-secret-key-2025"
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30  # <- This was missing
-    
-    # ── Logging ─────────────────────────────────────────
+    # ── Logging ───────────────────────────────────
     LOG_LEVEL: str = "INFO"
 
-    class Config:
-        env_file = ".env"
-        case_sensitive = True
+    model_config = SettingsConfigDict(env_file=".env", case_sensitive=True)
 
 
 settings = Settings()
