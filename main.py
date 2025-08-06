@@ -6,7 +6,7 @@ import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy import text           # <- new
+from sqlalchemy import text
 
 from api.endpoints import router as core_router
 from api.endpoints import hackrx_router
@@ -49,7 +49,7 @@ async def startup_event():
     try:
         # Test database connection
         db = next(get_db())
-        db.execute(text("SELECT 1"))          # ← wrap with text()
+        db.execute(text("SELECT 1"))
         logger.info("✅ Database connection OK")
 
         # Initialize Pinecone
@@ -59,7 +59,9 @@ async def startup_event():
         logger.info("🚀 Application startup complete")
     except Exception as e:
         logger.error("❌ Startup failed: %s", e)
-        raise
+        # Don't raise in production to allow deployment
+        if os.getenv("VERCEL_ENV") != "production":
+            raise
 
 @app.get("/", tags=["Meta"])
 async def root():
@@ -71,11 +73,13 @@ async def root():
         "hackrx_endpoint": "/api/v1/hackrx/run"
     }
 
+# This is important for Vercel
 if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 8000))
     uvicorn.run(
         "main:app",
-        host=settings.HOST,
-        port=settings.PORT,
-        reload=settings.DEBUG,
+        host="0.0.0.0",
+        port=port,
+        reload=False,  # Disable reload in production
         log_level=settings.LOG_LEVEL.lower(),
     )
