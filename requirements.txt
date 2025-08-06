@@ -17,7 +17,7 @@ pydantic-settings==2.4.0
 google-generativeai==0.8.3
 
 # Vector Database
-pinecone==3.0.5
+pinecone==3.2.1
 
 # Document Processing
 PyPDF2==3.0.1
@@ -37,7 +37,7 @@ email-validator==2.1.0
 python-json-logger==2.0.7
 
 # Async support for Pinecone
-pinecone==3.2.1
+pinecone[asyncio]
 
 # Security
 cryptography==41.0.8
