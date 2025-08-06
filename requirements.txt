@@ -37,7 +37,7 @@ email-validator==2.1.0
 python-json-logger==2.0.7
 
 # Async support for Pinecone
-pinecone=3.2.1
+pinecone==3.2.1
 
 # Security
 cryptography==41.0.8
