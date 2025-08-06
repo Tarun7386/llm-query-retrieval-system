@@ -12,7 +12,7 @@
 
 *A production-ready Retrieval-Augmented Generation (RAG) system that processes documents and answers questions with human-like understanding*
 
-[📚 Documentation](#-documentation) • [🚀 Quick Start](#-quick-start) • [🏗️ Architecture](#️-system-architecture) • [🔧 API Reference](#-api-reference) • [🤝 Contributing](#-contributing)
+• [🚀 Quick Start](#-quick-start) • [🏗️ Architecture](#️-system-architecture) • [🔧 API Reference](#-api-reference) • [🤝 Contributing](#-contributing)
 
 </div>
 
